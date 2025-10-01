@@ -148,6 +148,104 @@ class Model3DViewer {
 
     }
 
+    handleFileUpload ( files ) {
+
+        if ( files.length === 0 ) return;
+
+        this.showLoading( true );
+        this.showWelcomeMessage( false );
+
+        Array.from( files ).forEach( file => {
+
+            const fileName = file.name.toLowerCase();
+
+            if ( fileName.endsWith( '.stl' ) ) this.loadSTL( file );
+            else if ( fileName.endsWith( '.obj' ) ) this.loadOBJ( file );
+            else alert( `Unsupported file format: ${file.name}` );
+
+        } );
+
+        this.updateFileList( files );
+
+    }
+
+    loadSTL ( file ) {
+
+        const reader = new FileReader();
+
+        reader.onload = ( e ) => {
+
+            try {
+
+                const loader = new THREE.STLLoader();
+                const geometry = loader.parse( e.target.result );
+
+                this.createModelFromGeometry( geometry, file.name );
+                this.loadedFiles.push( { file, geometry, type: 'stl' } );
+                this.currentFileIndex = this.loadedFiles.length - 1;
+
+            } catch ( err ) {
+
+                console.error( 'Error loading STL:', err );
+                alert( `Error loading STL file: ${file.name}` );
+
+            }
+
+        };
+
+        reader.readAsArrayBuffer( file );
+
+    }
+
+    loadOBJ ( file ) {
+
+        const reader = new FileReader();
+
+        reader.onload = ( e ) => {
+
+            try {
+
+                const loader = new THREE.OBJLoader();
+                const object = loader.parse( e.target.result );
+
+                // Handle OBJ with multiple parts
+                let geometry;
+
+                if ( object.children.length > 0 ) {
+
+                    const geometries = [];
+
+                    object.traverse( ( child ) => { if ( child.isMesh ) {
+                        child.geometry.computeBoundingBox();
+                        geometries.push( child.geometry );
+                    } } );
+
+                    // Use first geometry for simplicity
+                    if ( geometries.length > 0 ) geometry = geometries[ 0 ];
+
+                } else geometry = object.geometry;
+
+                if ( geometry ) {
+
+                    this.createModelFromGeometry( geometry, file.name );
+                    this.loadedFiles.push( { file, geometry, type: 'obj' } );
+                    this.currentFileIndex = this.loadedFiles.length - 1;
+
+                }
+
+            } catch ( err ) {
+
+                console.error( 'Error loading OBJ:', err );
+                alert( `Error loading OBJ file: ${file.name}` );
+
+            }
+
+        };
+
+        reader.readAsText( file );
+
+    }
+
     setupEventListeners () {
 
         // File upload
