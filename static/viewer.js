@@ -420,6 +420,89 @@ class Model3DViewer {
 
     }
 
+    fitCameraToModel ( geometry ) {
+
+        geometry.computeBoundingBox();
+        const bbox = geometry.boundingBox;
+        const size = new THREE.Vector3();
+        bbox.getSize( size );
+
+        const maxDim = Math.max( size.x, size.y, size.z );
+        const fov = this.camera.fov * ( Math.PI / 180 );
+        let cameraZ = Math.abs( maxDim / 2 / Math.tan( fov / 2 ) );
+
+        // Add some padding
+        cameraZ *= 2.5;
+
+        this.camera.position.set( cameraZ, cameraZ, cameraZ );
+        this.camera.lookAt( 0, 0, 0 );
+
+        this.controls.target.set( 0, 0, 0 );
+        this.controls.update();
+
+    }
+
+    setCameraViewSmooth ( view ) {
+
+        if ( ! this.currentModel || this.isTransitioning ) return;
+
+        this.isTransitioning = true;
+
+        const distance = this.camera.position.length();
+        let targetPosition = new THREE.Vector3();
+
+        switch ( view ) {
+
+            case 'top': targetPosition.set( 0, distance, 0 ); break;
+            case 'bottom': targetPosition.set( 0, -distance, 0 ); break;
+            case 'front': targetPosition.set( 0, 0, distance ); break;
+            case 'back': targetPosition.set( 0, 0, -distance ); break;
+            case 'left': targetPosition.set( -distance, 0, 0 ); break;
+            case 'right': targetPosition.set( distance, 0, 0 ); break;
+            default: this.resetCameraView(); return;
+        }
+
+        this.animateCameraToPosition( targetPosition );
+
+    }
+
+    animateCameraToPosition ( targetPosition ) {
+
+        const startPosition = this.camera.position.clone();
+        const startTarget = this.controls.target.clone();
+        const duration = 1000;
+        const startTime = Date.now();
+
+        const animate = () => {
+
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min( elapsed / duration, 1 );
+
+            // Smooth easing function
+            const easeProgress = 1 - Math.pow( 1 - progress, 3 );
+
+            // Interpolate camera position
+            this.camera.position.lerpVectors( startPosition, targetPosition, easeProgress );
+            this.controls.target.lerpVectors( startTarget, new THREE.Vector3( 0, 0, 0 ), easeProgress );
+            this.controls.update();
+
+            if ( progress < 1 ) requestAnimationFrame( animate );
+            else this.isTransitioning = false;
+
+        };
+
+        animate();
+
+    }
+
+    resetCameraView () {
+
+        if ( ! this.currentModel ) return;
+
+        this.fitCameraToModel( this.currentModel.geometry );
+
+    }
+
     setupEventListeners () {
 
         // File upload
