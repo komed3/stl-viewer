@@ -568,12 +568,15 @@ class Model3DViewer {
 
         this.renderer.render( this.scene, this.camera );
         const canvas = this.renderer.domElement;
-        let dataURL;
+        const link = document.createElement( 'a' );
+        link.download = `3d-model-${ Date.now() }.${format}`;
 
-        if ( format === 'png' ) dataURL = canvas.toDataURL( 'image/png' );
-        else if ( format === 'jpeg' ) dataURL = canvas.toDataURL( 'image/jpeg', 0.9 );
+        if ( format === 'png' ) link.href = canvas.toDataURL( 'image/png' );
+        else if ( format === 'jpeg' ) link.href = canvas.toDataURL( 'image/jpeg', 0.9 );
 
-        this.downloadImage( dataURL, `3d-model-${ Date.now() }.${format}` );
+        document.body.appendChild( link );
+        link.click();
+        document.body.removeChild( link );
 
     }
 
