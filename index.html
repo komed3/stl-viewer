@@ -98,6 +98,38 @@
                     </div>
                 </div>
             </aside>
+            <div class="viewer">
+                <div class="control-buttons">
+                    <button id="resetView" class="overlay-btn" title="Reset View">
+                        <i class="fas fa-home"></i>
+                    </button>
+                    <button id="toggleGrid" class="overlay-btn" title="Toggle Grid">
+                        <i class="fa fa-th"></i>
+                    </button>
+                    <button id="toggleWireframe" class="overlay-btn" title="Toggle Wireframe">
+                        <i class="fas fa-project-diagram"></i>
+                    </button>
+                    <button id="toggleAxes" class="overlay-btn" title="Toggle Axes">
+                        <i class="fas fa-arrows-alt"></i>
+                    </button>
+                    <button id="toggleAutoRotate" class="overlay-btn" title="Toggle Auto-rotate">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div id="loadingIndicator" class="loading-indicator hidden">
+                    <div class="spinner"></div>
+                    <p>Loading 3D model...</p>
+                </div>
+                <div id="welcomeMessage" class="welcome-message">
+                    <i class="fas fa-cube fa-3x"></i>
+                    <h2>Welcome to 3D Model Viewer</h2>
+                    <p>Upload an STL or OBJ file to get started</p>
+                    <p class="welcome-hint">
+                        Use the file upload button in the sidebar to load your 3D models
+                    </p>
+                </div>
+                <canvas id="canvas"></canvas>
+            </div>
         </main>
         <footer class="footer">
             <p>&copy; 2025 komed3. Built with Three.js</p>
