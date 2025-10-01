@@ -577,6 +577,7 @@ class Model3DViewer {
         const icon = btn.querySelector( 'i' );
 
         if ( this.autoRotate ) {
+
             btn.classList.add( 'active' );
             icon.classList.add( 'rotating' );
             this.controls.autoRotateSpeed = 2.0;
