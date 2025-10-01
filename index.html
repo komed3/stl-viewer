@@ -23,7 +23,82 @@
                 </div>
             </div>
         </header>
-        <main class="app"></main>
+        <main class="app">
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3>File Upload</h3>
+                    <div class="file-upload">
+                        <input type="file" id="fileInput" accept=".stl,.obj" multiple />
+                        <label for="fileInput" class="file-upload-btn">
+                            <i class="fas fa-upload"></i>
+                            Choose Files
+                        </label>
+                        <div id="fileList" class="file-list"></div>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Camera Views</h3>
+                    <select id="viewSelect" class="view-select">
+                        <option value="default">Default View</option>
+                        <option value="top">Top View (Floor Plan)</option>
+                        <option value="front">Front Elevation</option>
+                        <option value="back">Back Elevation</option>
+                        <option value="left">Left Elevation</option>
+                        <option value="right">Right Elevation</option>
+                        <option value="bottom">Bottom View</option>
+                    </select>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Model Statistics</h3>
+                    <div id="modelStats" class="model-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Vertices:</span>
+                            <span id="vertexCount" class="stat-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Faces:</span>
+                            <span id="faceCount" class="stat-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Volume:</span>
+                            <span id="volume" class="stat-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Surface Area:</span>
+                            <span id="surfaceArea" class="stat-value">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Box:</span>
+                            <span id="boundingBox" class="stat-value">-</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Controls</h3>
+                    <div class="controls-info">
+                        <p><strong>Mouse:</strong></p>
+                        <ul>
+                            <li>Left Click + Drag: Rotate</li>
+                            <li>Right Click + Drag: Pan</li>
+                            <li>Scroll: Zoom</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Export</h3>
+                    <div class="export-options">
+                        <button id="exportPNG" class="export-btn">
+                            <i class="fas fa-download"></i>
+                            PNG
+                        </button>
+                        <button id="exportJPEG" class="export-btn">
+                            <i class="fas fa-download"></i>
+                            JPEG
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </main>
         <footer class="footer">
             <p>&copy; 2025 komed3. Built with Three.js</p>
         </footer>
