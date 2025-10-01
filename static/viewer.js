@@ -32,6 +32,7 @@ class Model3DViewer {
 
         this.init();
         this.setupTheme();
+        this.setupEventListeners();
 
     }
 
@@ -142,6 +143,53 @@ class Model3DViewer {
             icon.className = 'fas fa-moon';
 
         }
+
+    }
+
+    setupEventListeners () {
+
+        // File upload
+        document.getElementById( 'fileInput' ).addEventListener( 'change', ( e ) => {
+            this.handleFileUpload( e.target.files );
+        } );
+
+        // View selection with smooth transitions
+        document.getElementById( 'viewSelect' ).addEventListener( 'change', ( e ) => {
+            this.setCameraViewSmooth( e.target.value );
+        } );
+
+        // Export buttons
+        document.getElementById( 'exportPNG' ).addEventListener( 'click', () => {
+            this.exportImage( 'png' );
+        } );
+        document.getElementById('exportJPEG').addEventListener( 'click', () => {
+            this.exportImage( 'jpeg' );
+        } );
+
+        // Control buttons
+        document.getElementById( 'resetView' ).addEventListener( 'click', () => {
+            this.resetCameraView();
+        } );
+        document.getElementById( 'toggleGrid' ).addEventListener( 'click', () => {
+            this.toggleGrid();
+        } );
+        document.getElementById( 'toggleWireframe' ).addEventListener( 'click', () => {
+            this.toggleWireframe();
+        } );
+        document.getElementById( 'toggleAxes' ).addEventListener( 'click', () => {
+            this.toggleAxes();
+        } );
+        document.getElementById( 'toggleAutoRotate' ).addEventListener( 'click', () => {
+            this.toggleAutoRotate();
+        } );
+
+        // Theme toggle
+        document.getElementById( 'themeToggle' ).addEventListener( 'click', () => {
+            this.toggleTheme();
+        } );
+
+        // Window resize
+        window.addEventListener( 'resize', () => this.handleResize() );
 
     }
 
