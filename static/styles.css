@@ -13,6 +13,7 @@
     --border-color: #dee2e6;
     --accent-color: #0066cc;
     --accent-hover: #0052a3;
+    --accent-alert: #dc3545;
     --shadow: rgba( 0 0 0 / 0.1 );
     --shadow-lg: rgba( 0 0 0 / 0.15 );
 
@@ -112,6 +113,197 @@ body {
     max-width: 1400px;
 }
 
+/** Sidebar */
+
+.sidebar {
+    width: 300px;
+    padding: var( --spacing-lg );
+    background-color: var( --bg-secondary );
+    border-right: 1px solid var( --border-color );
+    overflow-y: auto;
+}
+
+.sidebar-section {
+    margin-bottom: var( --spacing-xl );
+}
+
+.sidebar-section h3 {
+    margin-bottom: var( --spacing-md );
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var( --text-primary );
+}
+
+/** File Upload */
+
+.file-upload {
+    display: flex;
+    flex-direction: column;
+    gap: var( --spacing-md );
+}
+
+.file-upload input[type="file"] {
+    display: none;
+}
+
+.file-upload-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var( --spacing-sm );
+    padding: var( --spacing-md ) var( --spacing-lg );
+    font-weight: 500;
+    color: white;
+    background-color: var( --accent-color );
+    border: none;
+    border-radius: var( --border-radius-md );
+    transition: all var( --transition-fast );
+    cursor: pointer;
+}
+
+.file-upload-btn:hover {
+    background-color: var( --accent-hover );
+    box-shadow: 0 4px 8px var( --shadow );
+}
+
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: var( --spacing-sm );
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var( --spacing-sm );
+    font-size: 0.9rem;
+    background-color: var( --bg-tertiary );
+    border-radius: var( --border-radius-sm );
+}
+
+.file-item .file-name {
+    flex: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.file-item .remove-file {
+    padding: var( --spacing-xs );
+    color: var( --text-secondary );
+    background: none;
+    border: none;
+    transition: color var( --transition-fast );
+    cursor: pointer;
+}
+
+.file-item .remove-file:hover {
+    color: var( --accent-alert );
+}
+
+/** View Select */
+
+.view-select {
+    width: 100%;
+    padding: var( --spacing-sm ) var( --spacing-md );
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var( --text-primary );
+    background-color: var( --bg-primary );
+    border: 1px solid var( --border-color );
+    border-radius: var( --border-radius-md );
+    transition: all var( --transition-fast );
+    cursor: pointer;
+}
+
+.view-select:focus {
+    border-color: var( --accent-color );
+    box-shadow: 0 0 0 2px rgba( 0 102 204 / 0.2 );
+    outline: none;
+}
+
+/** Model Stats */
+
+.model-stats {
+    display: flex;
+    flex-direction: column;
+    gap: var( --spacing-sm );
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var( --spacing-sm );
+    font-size: 0.9rem;
+    background-color: var( --bg-tertiary );
+    border-radius: var( --border-radius-sm );
+}
+
+.stat-label {
+    font-weight: 500;
+    color: var( --text-secondary );
+}
+
+.stat-value {
+    font-weight: 600;
+    color: var( --text-primary );
+}
+
+/** Controls Info */
+
+.controls-info {
+    font-size: 0.85rem;
+    color: var( --text-secondary );
+}
+
+.controls-info ul {
+    list-style: none;
+    margin-top: var( --spacing-sm );
+}
+
+.controls-info li {
+    margin-bottom: var( --spacing-xs );
+    padding-left: var( --spacing-md );
+    position: relative;
+}
+
+.controls-info li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var( --accent-color );
+}
+
+/** Export Buttons */
+
+.export-options {
+    display: flex;
+    flex-direction: column;
+    gap: var( --spacing-sm );
+}
+
+.export-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var( --spacing-sm );
+    padding: var( --spacing-sm ) var( --spacing-md );
+    font-size: 0.9rem;
+    color: var( --text-primary );
+    background-color: var( --bg-primary );
+    border: 1px solid var( --border-color );
+    border-radius: var( --border-radius-md );
+    transition: all var( --transition-fast );
+    cursor: pointer;
+}
+
+.export-btn:hover {
+    color: white;
+    background-color: var( --accent-color );
+}
+
 /** Footer */
 
 .footer {
@@ -121,6 +313,4 @@ body {
     color: var( --text-secondary );
     background-color: var( --bg-secondary );
     border-top: 1px solid var( --border-color );
-    box-shadow: 0 -1px 3px var( --shadow );
-    z-index: 999;
 }
