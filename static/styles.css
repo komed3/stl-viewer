@@ -310,33 +310,52 @@ button:focus, select:focus {
 .file-list {
     display: flex;
     flex-direction: column;
-    gap: var( --spacing-sm );
+    gap: 3px;
 }
 
 .file-item {
     display: flex;
-    justify-content: space-between;
+    align-items: stretch;
+    gap: 3px;
+}
+
+.file-item .file-name,
+.file-item .remove-file {
+    display: flex;
     align-items: center;
     padding: var( --spacing-sm );
     font-size: 0.9rem;
+    color: var( --text-primary );
     background-color: var( --bg-tertiary );
-    border-radius: var( --border-radius-sm );
+    border: none;
+    overflow: hidden;
+    cursor: pointer;
 }
 
 .file-item .file-name {
     flex: 1;
     white-space: nowrap;
+    text-align: left;
     text-overflow: ellipsis;
-    overflow: hidden;
+    font-family: inherit;
+    border-top-left-radius: var( --border-radius-sm );
+    border-bottom-left-radius: var( --border-radius-sm );
+    transition: all var( --transition-fast );
+}
+
+.file-item.active .file-name {
+    font-weight: 600;
+    color: var( --accent-color );
 }
 
 .file-item .remove-file {
-    padding: var( --spacing-xs );
+    flex: 0 0 auto;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
     color: var( --text-secondary );
-    background: none;
-    border: none;
+    border-top-right-radius: var( --border-radius-sm );
+    border-bottom-right-radius: var( --border-radius-sm );
     transition: color var( --transition-fast );
-    cursor: pointer;
 }
 
 .file-item .remove-file:hover {

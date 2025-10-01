@@ -155,21 +155,19 @@ class Model3DViewer {
         this.showLoading( true );
         this.showWelcomeMessage( false );
 
-        // Clear previous files
-        this.loadedFiles = [];
-        this.currentFileIndex = -1;
-
+        // Add new files to list
         Array.from( files ).forEach( file => {
 
             const fileName = file.name.toLowerCase();
+
+            // Prevent duplicates
+            if ( this.loadedFiles.some( f => f.file.name === file.name ) ) return;
 
             if ( fileName.endsWith( '.stl' ) ) this.loadSTL( file );
             else if ( fileName.endsWith( '.obj' ) ) this.loadOBJ( file );
             else alert( `Unsupported file format: ${file.name}` );
 
         } );
-
-        this.updateFileList( files );
 
     }
 
@@ -220,8 +218,10 @@ class Model3DViewer {
                     const geometries = [];
 
                     object.traverse( ( child ) => { if ( child.isMesh ) {
+
                         child.geometry.computeBoundingBox();
                         geometries.push( child.geometry );
+
                     } } );
 
                     // Use first geometry for simplicity
@@ -250,7 +250,7 @@ class Model3DViewer {
 
     }
 
-    createModelFromGeometry ( geometry ) {
+    createModelFromGeometry ( geometry, fileName ) {
 
         // Remove existing model
         if ( this.currentModel ) this.scene.remove( this.currentModel );
@@ -284,6 +284,17 @@ class Model3DViewer {
 
         // Hide loading indicator
         this.showLoading( false );
+
+        // Remember current model
+        if ( fileName ) {
+
+            const idx = this.loadedFiles.findIndex( f => f.file.name === fileName );
+            if ( idx !== -1 ) this.currentFileIndex = idx;
+
+        }
+
+        // Update the file list
+        setTimeout( this.updateFileList.bind( this ), 200 );
 
     }
 
@@ -611,9 +622,6 @@ class Model3DViewer {
 
             if ( this.loadedFiles.length > 0 ) {
 
-                // Update file list with remaining files
-                this.updateFileList( this.loadedFiles.map( f => f.file ) );
-
                 // If the removed file was the current one, switch to another
                 if ( fileIndex === this.currentFileIndex ) {
 
@@ -632,13 +640,16 @@ class Model3DViewer {
 
                 // No files left, clear the viewer
                 this.clearViewer();
+                this.updateFileList();
 
             }
 
         }
 
         // Clear file input if no files left
-        if ( this.loadedFiles.length === 0 ) document.getElementById( 'fileInput' ).value = '';
+        if ( this.loadedFiles.length === 0 ) {
+            document.getElementById( 'fileInput' ).value = '';
+        }
 
     }
 
@@ -668,18 +679,21 @@ class Model3DViewer {
 
     }
 
-    updateFileList ( files ) {
+    updateFileList () {
 
         const fileList = document.getElementById( 'fileList' );
         fileList.innerHTML = '';
 
-        Array.from( files ).forEach( file => {
+        this.loadedFiles.forEach( ( entry, idx ) => {
 
             const fileItem = document.createElement( 'div' );
-            fileItem.className = 'file-item';
+
+            fileItem.classList.add( 'file-item' );
+            if ( idx == this.currentFileIndex ) fileItem.classList.add( 'active' );
+
             fileItem.innerHTML = `
-                <span class="file-name">${file.name}</span>
-                <button class="remove-file" data-name="${file.name}">
+                <button class="file-name" data-idx="${idx}">${entry.file.name}</button>
+                <button class="remove-file" data-name="${entry.file.name}">
                     <i class="fas fa-trash"></i>
                 </button>
             `;
@@ -688,18 +702,31 @@ class Model3DViewer {
 
         } );
 
-        // Add remove file functionality
-        fileList.addEventListener( 'click', ( e ) => {
+        // Load the file
+        fileList.querySelectorAll( '.file-name' ).forEach( btn => {
 
-            if (
-                e.target.classList.contains( 'remove-file' ) ||
-                e.target.parentElement.classList.contains( 'remove-file' )
-            ) {
+            btn.addEventListener( 'click', ( e ) => {
 
-                const fileName = e.target.dataset?.name || e.target.parentElement.dataset.name;
+                const idx = parseInt( e.target.dataset.idx, 10 );
+
+                if ( this.loadedFiles[ idx ] ) this.createModelFromGeometry(
+                    this.loadedFiles[ idx ].geometry,
+                    this.loadedFiles[ idx ].file.name
+                );
+
+            } );
+
+        } );
+
+        // Remove the file
+        fileList.querySelectorAll( '.remove-file' ).forEach( btn => {
+
+            btn.addEventListener( 'click', () => {
+
+                const fileName = btn.dataset.name;
                 this.removeFile( fileName );
 
-            }
+            } );
 
         } );
 
