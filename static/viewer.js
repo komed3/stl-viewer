@@ -752,6 +752,11 @@ class Model3DViewer {
 
     setupEventListeners () {
 
+        // Grabbing Canvas
+        const canvas = document.getElementById( 'canvas' );
+        canvas.addEventListener( 'pointerdown', () => canvas.style.cursor = 'grabbing' );
+        canvas.addEventListener( 'pointerup', () => canvas.style.cursor = 'grab' );
+
         // File upload
         document.getElementById( 'fileInput' ).addEventListener( 'change', ( e ) => {
             this.handleFileUpload( e.target.files );
@@ -766,7 +771,7 @@ class Model3DViewer {
         document.getElementById( 'exportPNG' ).addEventListener( 'click', () => {
             this.exportImage( 'png' );
         } );
-        document.getElementById('exportJPEG').addEventListener( 'click', () => {
+        document.getElementById( 'exportJPEG' ).addEventListener( 'click', () => {
             this.exportImage( 'jpeg' );
         } );
 

@@ -152,7 +152,7 @@ button:focus, select:focus {
     display: block;
     width: 100% !important;
     height: 100% !important;
-    cursor: move;
+    cursor: grab;
 }
 
 /** Control Buttons */
@@ -192,8 +192,8 @@ button:focus, select:focus {
 }
 
 @keyframes rotate {
-    from { transform: rotate(   0deg ); }
-      to { transform: rotate( 360deg ); }
+    from { transform: rotate(    0deg ); }
+      to { transform: rotate( -360deg ); }
 }
 
 /** Overlays */
