@@ -34,6 +34,8 @@ class Model3DViewer {
         this.setupTheme();
         this.setupEventListeners();
 
+        this.showWelcomeMessage( true );
+
     }
 
     init () {
@@ -211,6 +213,47 @@ class Model3DViewer {
 
         if ( this.controls ) this.controls.update();
         this.renderer.render( this.scene, this.camera );
+
+    }
+
+    showLoading ( show ) {
+
+        const loading = document.getElementById( 'loadingIndicator' );
+        const welcome = document.getElementById( 'welcomeMessage' );
+
+        if ( show ) {
+
+            loading.classList.remove( 'hidden' );
+            welcome.classList.add( 'hidden' );
+
+        } else {
+
+            loading.classList.add( 'hidden' );
+            welcome.classList.add( 'hidden' );
+
+        }
+
+    }
+
+    showWelcomeMessage ( show ) {
+
+        const welcome = document.getElementById( 'welcomeMessage' );
+        const ctrlBtns = document.getElementById( 'controlButtons' );
+        const canvas = document.getElementById( 'canvas' );
+
+        if ( show ) {
+
+            welcome.classList.remove( 'hidden' );
+            ctrlBtns.classList.add( 'hidden' );
+            canvas.style.visibility = 'hidden';
+
+        } else {
+
+            welcome.classList.add( 'hidden' );
+            ctrlBtns.classList.remove( 'hidden' );
+            canvas.style.visibility = 'visible';
+
+        }
 
     }
 
