@@ -31,6 +31,7 @@ class Model3DViewer {
         };
 
         this.init();
+        this.setupTheme();
 
     }
 
@@ -68,6 +69,7 @@ class Model3DViewer {
         this.setupLighting();
         this.setupGridAndAxes();
         this.animate();
+        this.handleResize();
 
     }
 
@@ -102,6 +104,44 @@ class Model3DViewer {
         this.axesHelper = new THREE.AxesHelper( 5 );
         this.axesHelper.visible = false;
         this.scene.add( this.axesHelper );
+
+    }
+
+    setupTheme () {
+
+        const savedTheme = localStorage.getItem( 'theme' ) || 'light';
+        this.isDarkTheme = savedTheme === 'dark';
+
+        this.applyTheme();
+
+    }
+
+    toggleTheme () {
+
+        this.isDarkTheme = ! this.isDarkTheme;
+        localStorage.setItem( 'theme', this.isDarkTheme ? 'dark' : 'light' );
+
+        this.applyTheme();
+
+    }
+
+    applyTheme () {
+
+        const icon = document.getElementById( 'themeToggle' ).querySelector( 'i' );
+
+        if ( this.isDarkTheme ) {
+
+            document.documentElement.setAttribute( 'data-theme', 'dark' );
+            this.scene.background = new THREE.Color( 0x1a1a1a );
+            icon.className = 'fas fa-sun';
+
+        } else {
+
+            document.documentElement.removeAttribute( 'data-theme' );
+            this.scene.background = new THREE.Color( 0xf8f9fa );
+            icon.className = 'fas fa-moon';
+
+        }
 
     }
 
