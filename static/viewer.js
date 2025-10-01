@@ -517,6 +517,22 @@ class Model3DViewer {
 
     }
 
+    toggleGrid () {
+
+        if ( this.gridHelper ) {
+
+            this.gridHelper.visible = ! this.gridHelper.visible;
+
+            // Update button state
+            const btn = document.getElementById( 'toggleGrid' );
+
+            if ( this.gridHelper.visible ) btn.classList.add( 'active' );
+            else btn.classList.remove( 'active' );
+
+        }
+
+    }
+
     toggleAxes () {
 
         if ( this.axesHelper ) {
