@@ -379,7 +379,7 @@ class Model3DViewer {
 
     }
 
-    calculateTriangleArea( v1, v2, v3 ) {
+    calculateTriangleArea ( v1, v2, v3 ) {
 
         const edge1 = new THREE.Vector3().subVectors( v2, v1 );
         const edge2 = new THREE.Vector3().subVectors( v3, v1 );
@@ -389,9 +389,34 @@ class Model3DViewer {
 
     }
 
-    calculateSignedVolume( v1, v2, v3 ) {
+    calculateSignedVolume ( v1, v2, v3 ) {
 
         return v1.dot( v2.cross( v3 ) ) / 6;
+
+    }
+
+    updateStatsDisplay () {
+
+        document.getElementById( 'vertexCount' ).textContent = 
+            this.modelStats.vertices.toLocaleString();
+        document.getElementById( 'faceCount' ).textContent = 
+            Math.floor( this.modelStats.faces ).toLocaleString();
+        document.getElementById( 'volume' ).textContent = 
+            this.modelStats.volume.toFixed( 2 ) + ' units³';
+        document.getElementById( 'surfaceArea' ).textContent = 
+            this.modelStats.surfaceArea.toFixed( 2 ) + ' units²';
+
+        const bbox = this.modelStats.boundingBox;
+
+        if ( bbox && bbox.min && bbox.max ) {
+
+            const size = new THREE.Vector3();
+            bbox.getSize( size );
+
+            document.getElementById( 'boundingBox' ).textContent = 
+                `${ size.x.toFixed( 2 ) } × ${ size.y.toFixed( 2 ) } × ${ size.z.toFixed( 2 ) }`;
+
+        }
 
     }
 
