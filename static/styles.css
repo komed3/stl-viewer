@@ -103,3 +103,16 @@ body {
     color: var( --text-primary );
     background-color: var( --bg-tertiary );
 }
+
+/** Footer */
+
+.footer {
+    padding: var( --spacing-md );
+    text-align: center;
+    font-size: 0.9rem;
+    color: var( --text-muted );
+    background-color: var( --bg-secondary );
+    border-top: 1px solid var( --border-color );
+    box-shadow: 0 -1px 3px var( --shadow );
+    z-index: 999;
+}
