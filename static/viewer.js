@@ -503,6 +503,80 @@ class Model3DViewer {
 
     }
 
+    toggleWireframe () {
+
+        this.wireframeMode = ! this.wireframeMode;
+
+        if ( this.currentModel ) this.currentModel.material.wireframe = this.wireframeMode;
+
+        // Update button state
+        const btn = document.getElementById( 'toggleWireframe' );
+
+        if ( this.wireframeMode ) btn.classList.add( 'active' );
+        else btn.classList.remove( 'active' );
+
+    }
+
+    toggleAxes () {
+
+        if ( this.axesHelper ) {
+
+            this.axesHelper.visible = ! this.axesHelper.visible;
+
+            // Update button state
+            const btn = document.getElementById( 'toggleAxes' );
+
+            if ( this.axesHelper.visible ) btn.classList.add( 'active' );
+            else btn.classList.remove( 'active' );
+
+        }
+
+    }
+
+    toggleAutoRotate () {
+
+        this.autoRotate = ! this.autoRotate;
+        this.controls.autoRotate = this.autoRotate;
+
+        // Update button state and icon
+        const btn = document.getElementById( 'toggleAutoRotate' );
+        const icon = btn.querySelector( 'i' );
+
+        if ( this.autoRotate ) {
+            btn.classList.add( 'active' );
+            icon.classList.add( 'rotating' );
+            this.controls.autoRotateSpeed = 2.0;
+
+        } else {
+
+            btn.classList.remove( 'active' );
+            icon.classList.remove( 'rotating' );
+            this.controls.autoRotateSpeed = 0;
+
+        }
+
+    }
+
+    exportImage ( format ) {
+
+        if ( ! this.currentModel ) {
+
+            alert( 'No model loaded to export' );
+            return;
+
+        }
+
+        this.renderer.render( this.scene, this.camera );
+        const canvas = this.renderer.domElement;
+        let dataURL;
+
+        if ( format === 'png' ) dataURL = canvas.toDataURL( 'image/png' );
+        else if ( format === 'jpeg' ) dataURL = canvas.toDataURL( 'image/jpeg', 0.9 );
+
+        this.downloadImage( dataURL, `3d-model-${ Date.now() }.${format}` );
+
+    }
+
     setupEventListeners () {
 
         // File upload
