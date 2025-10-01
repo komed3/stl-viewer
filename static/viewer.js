@@ -155,6 +155,10 @@ class Model3DViewer {
         this.showLoading( true );
         this.showWelcomeMessage( false );
 
+        // Clear previous files
+        this.loadedFiles = [];
+        this.currentFileIndex = -1;
+
         Array.from( files ).forEach( file => {
 
             const fileName = file.name.toLowerCase();
@@ -180,7 +184,7 @@ class Model3DViewer {
                 const loader = new THREE.STLLoader();
                 const geometry = loader.parse( e.target.result );
 
-                this.createModelFromGeometry( geometry, file.name );
+                this.createModelFromGeometry( geometry );
                 this.loadedFiles.push( { file, geometry, type: 'stl' } );
                 this.currentFileIndex = this.loadedFiles.length - 1;
 
@@ -227,7 +231,7 @@ class Model3DViewer {
 
                 if ( geometry ) {
 
-                    this.createModelFromGeometry( geometry, file.name );
+                    this.createModelFromGeometry( geometry );
                     this.loadedFiles.push( { file, geometry, type: 'obj' } );
                     this.currentFileIndex = this.loadedFiles.length - 1;
 
@@ -243,6 +247,151 @@ class Model3DViewer {
         };
 
         reader.readAsText( file );
+
+    }
+
+    createModelFromGeometry ( geometry ) {
+
+        // Remove existing model
+        if ( this.currentModel ) this.scene.remove( this.currentModel );
+
+        // Center the geometry
+        geometry.computeBoundingBox();
+        const boundingBox = geometry.boundingBox;
+        const center = new THREE.Vector3();
+        boundingBox.getCenter( center );
+        geometry.translate( -center.x, -center.y, -center.z );
+
+        // Create material
+        const material = new THREE.MeshPhongMaterial( {
+            color: 0x4a9eff, specular: 0x111111, shininess: 100,
+            side: THREE.DoubleSide
+        } );
+
+        // Create mesh
+        this.currentModel = new THREE.Mesh( geometry, material );
+        this.currentModel.castShadow = true;
+        this.currentModel.receiveShadow = true;
+
+        this.scene.add( this.currentModel );
+
+        // Calculate and display statistics
+        this.calculateModelStats( geometry );
+        this.updateStatsDisplay();
+
+        // Fit camera to model
+        this.fitCameraToModel( geometry );
+
+        // Hide loading indicator
+        this.showLoading( false );
+
+    }
+
+    calculateModelStats ( geometry ) {
+
+        const positions = geometry.attributes.position;
+        const indices = geometry.index;
+
+        this.modelStats.vertices = positions.count;
+        this.modelStats.faces = indices ? indices.count / 3 : positions.count / 3;
+
+        // Calculate bounding box
+        geometry.computeBoundingBox();
+        this.modelStats.boundingBox = geometry.boundingBox;
+
+        // Calculate surface area and volume
+        this.calculateSurfaceAreaAndVolume( geometry );
+
+    }
+
+    calculateSurfaceAreaAndVolume ( geometry ) {
+
+        const positions = geometry.attributes.position;
+        const indices = geometry.index;
+
+        let surfaceArea = 0;
+        let volume = 0;
+
+        if ( indices ) {
+
+            for ( let i = 0; i < indices.count; i += 3 ) {
+
+                const a = indices.getX( i );
+                const b = indices.getX( i + 1 );
+                const c = indices.getX( i + 2 );
+
+                const v1 = new THREE.Vector3(
+                    positions.getX( a ),
+                    positions.getY( a ),
+                    positions.getZ( a )
+                );
+
+                const v2 = new THREE.Vector3(
+                    positions.getX( b ),
+                    positions.getY( b ),
+                    positions.getZ( b )
+                );
+
+                const v3 = new THREE.Vector3(
+                    positions.getX( c ),
+                    positions.getY( c ),
+                    positions.getZ( c )
+                );
+
+                const area = this.calculateTriangleArea( v1, v2, v3 );
+                surfaceArea += area;
+                volume += this.calculateSignedVolume( v1, v2, v3 );
+
+            }
+
+        } else {
+
+            for ( let i = 0; i < positions.count; i += 9 ) {
+
+                const v1 = new THREE.Vector3(
+                    positions.getX( i ),
+                    positions.getY( i ),
+                    positions.getZ( i )
+                );
+
+                const v2 = new THREE.Vector3(
+                    positions.getX( i + 3 ), 
+                    positions.getY( i + 3 ),
+                    positions.getZ( i + 3 )
+                );
+
+                const v3 = new THREE.Vector3(
+                    positions.getX( i + 6 ),
+                    positions.getY( i + 6 ),
+                    positions.getZ( i + 6 )
+                );
+
+                const area = this.calculateTriangleArea( v1, v2, v3 );
+                surfaceArea += area;
+                volume += this.calculateSignedVolume( v1, v2, v3 );
+
+            }
+
+        }
+
+        this.modelStats.surfaceArea = surfaceArea;
+        this.modelStats.volume = Math.abs( volume );
+
+    }
+
+    calculateTriangleArea( v1, v2, v3 ) {
+
+        const edge1 = new THREE.Vector3().subVectors( v2, v1 );
+        const edge2 = new THREE.Vector3().subVectors( v3, v1 );
+        const cross = new THREE.Vector3().crossVectors( edge1, edge2 );
+
+        return 0.5 * cross.length();
+
+    }
+
+    calculateSignedVolume( v1, v2, v3 ) {
+
+        return v1.dot( v2.cross( v3 ) ) / 6;
 
     }
 
