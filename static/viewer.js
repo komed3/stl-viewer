@@ -135,14 +135,18 @@ class Model3DViewer {
         if ( this.isDarkTheme ) {
 
             document.documentElement.setAttribute( 'data-theme', 'dark' );
-            this.scene.background = new THREE.Color( 0x1a1a1a );
             icon.className = 'fas fa-sun';
+
+            this.scene.background = new THREE.Color( 0x1a1a1a );
+            if ( this.currentModel ) this.currentModel.material.color.set( 0x7ebaff );
 
         } else {
 
             document.documentElement.removeAttribute( 'data-theme' );
-            this.scene.background = new THREE.Color( 0xf8f9fa );
             icon.className = 'fas fa-moon';
+
+            this.scene.background = new THREE.Color( 0xf8f9fa );
+            if ( this.currentModel ) this.currentModel.material.color.set( 0x2088ff );
 
         }
 
@@ -264,8 +268,8 @@ class Model3DViewer {
 
         // Create material
         const material = new THREE.MeshPhongMaterial( {
-            color: 0x4a9eff, specular: 0x111111, shininess: 100,
-            side: THREE.DoubleSide
+            color: this.isDarkTheme ? 0x7ebaff : 0x2088ff,
+            specular: 0x111111, shininess: 100, side: THREE.DoubleSide
         } );
 
         // Create mesh
