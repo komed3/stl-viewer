@@ -646,6 +646,12 @@ class Model3DViewer {
 
                     }
 
+                } else {
+
+                    // At least update the file index and list
+                    if ( fileIndex < this.currentFileIndex ) this.currentFileIndex--;
+                    this.updateFileList();
+
                 }
 
             } else {
