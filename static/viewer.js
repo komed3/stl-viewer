@@ -596,6 +596,115 @@ class Model3DViewer {
 
     }
 
+    removeFile ( fileName ) {
+
+        // Find the file in loaded files
+        const fileIndex = this.loadedFiles.findIndex( f => f.file.name === fileName );
+
+        if ( fileIndex !== -1 ) {
+
+            this.loadedFiles.splice( fileIndex, 1 );
+
+            // Update file list display
+            const fileList = document.getElementById( 'fileList' );
+            fileList.innerHTML = '';
+
+            if ( this.loadedFiles.length > 0 ) {
+
+                // Update file list with remaining files
+                this.updateFileList( this.loadedFiles.map( f => f.file ) );
+
+                // If the removed file was the current one, switch to another
+                if ( fileIndex === this.currentFileIndex ) {
+
+                    this.currentFileIndex = Math.max( 0, fileIndex - 1 );
+
+                    if ( this.loadedFiles.length > 0 ) {
+
+                        const newFile = this.loadedFiles[ this.currentFileIndex ];
+                        this.createModelFromGeometry( newFile.geometry, newFile.file.name );
+
+                    }
+
+                }
+
+            } else {
+
+                // No files left, clear the viewer
+                this.clearViewer();
+
+            }
+
+        }
+
+        // Clear file input if no files left
+        if ( this.loadedFiles.length === 0 ) document.getElementById( 'fileInput' ).value = '';
+
+    }
+
+    clearViewer () {
+
+        // Remove current model
+        if ( this.currentModel ) {
+
+            this.scene.remove( this.currentModel );
+            this.currentModel = null;
+
+        }
+
+        // Reset stats
+        this.modelStats = {
+            vertices: 0, faces: 0, volume: 0, surfaceArea: 0,
+            boundingBox: { min: null, max: null }
+        };
+
+        this.updateStatsDisplay();
+
+        // Show welcome message
+        this.showWelcomeMessage( true );
+
+        // Reset file list
+        document.getElementById( 'fileList' ).innerHTML = '';
+
+    }
+
+    updateFileList ( files ) {
+
+        const fileList = document.getElementById( 'fileList' );
+        fileList.innerHTML = '';
+
+        Array.from( files ).forEach( file => {
+
+            const fileItem = document.createElement( 'div' );
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <span class="file-name">${file.name}</span>
+                <button class="remove-file" data-name="${file.name}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+
+            fileList.appendChild( fileItem );
+
+        } );
+
+        // Add remove file functionality
+        fileList.addEventListener( 'click', ( e ) => {
+
+            if (
+                e.target.classList.contains( 'remove-file' ) ||
+                e.target.parentElement.classList.contains( 'remove-file' )
+            ) {
+
+                const fileName = e.target.dataset?.name || e.target.parentElement.dataset.name;
+                this.removeFile( fileName );
+
+            }
+
+        } );
+
+    }
+
     setupEventListeners () {
 
         // File upload
