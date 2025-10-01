@@ -15,6 +15,7 @@ class Model3DViewer {
         this.renderer = null;
         this.controls = null;
         this.currentModel = null;
+        this.gridHelper = null;
         this.axesHelper = null;
         this.wireframeMode = false;
         this.isDarkTheme = false;
@@ -28,6 +29,8 @@ class Model3DViewer {
             vertices: 0, faces: 0, volume: 0, surfaceArea: 0,
             boundingBox: { min: null, max: null }
         };
+
+        this.init();
 
     }
 
@@ -61,6 +64,65 @@ class Model3DViewer {
         this.controls.screenSpacePanning = false;
         this.controls.minDistance = 1;
         this.controls.maxDistance = 100;
+
+        this.setupLighting();
+        this.setupGridAndAxes();
+        this.animate();
+
+    }
+
+    setupLighting () {
+
+        // Ambient light
+        const ambientLight = new THREE.AmbientLight( 0x404040, 0.6 );
+        this.scene.add( ambientLight );
+
+        // Directional light
+        const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+        directionalLight.position.set( 10, 10, 5 );
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        this.scene.add( directionalLight );
+
+        // Point light
+        const pointLight = new THREE.PointLight( 0xffffff, 0.5 );
+        pointLight.position.set( -10, -10, -5 );
+        this.scene.add( pointLight );
+
+    }
+
+    setupGridAndAxes () {
+
+        // Grid helper
+        this.gridHelper = new THREE.GridHelper( 20, 20, 0x888888, 0xcccccc );
+        this.scene.add( this.gridHelper );
+
+        // Axes helper
+        this.axesHelper = new THREE.AxesHelper( 5 );
+        this.axesHelper.visible = false;
+        this.scene.add( this.axesHelper );
+
+    }
+
+    handleResize () {
+
+        const canvas = document.getElementById( 'canvas' );
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize( width, height );
+
+    }
+
+    animate () {
+
+        requestAnimationFrame( () => this.animate() );
+
+        if ( this.controls ) this.controls.update();
+        this.renderer.render( this.scene, this.camera );
 
     }
 
