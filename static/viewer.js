@@ -279,12 +279,6 @@ class Model3DViewer {
         this.calculateModelStats( geometry );
         this.updateStatsDisplay();
 
-        // Fit camera to model
-        this.fitCameraToModel( geometry );
-
-        // Hide loading indicator
-        this.showLoading( false );
-
         // Remember current model
         if ( fileName ) {
 
@@ -293,8 +287,18 @@ class Model3DViewer {
 
         }
 
-        // Update the file list
-        setTimeout( this.updateFileList.bind( this ), 200 );
+        setTimeout( () => {
+
+            // Reset camera view
+            this.resetCameraView();
+
+            // Update the file list
+            this.updateFileList();
+
+            // Hide loading indicator
+            this.showLoading( false );
+
+        }, 200 );
 
     }
 
@@ -508,8 +512,11 @@ class Model3DViewer {
 
     resetCameraView () {
 
+        this.isTransitioning = false;
+
         if ( ! this.currentModel ) return;
 
+        document.getElementById( 'viewSelect' ).value = 'default';
         this.fitCameraToModel( this.currentModel.geometry );
 
     }
